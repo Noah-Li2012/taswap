@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TaSwap&trade;</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      /* Cool animated blue/green gradient background with a soft glow */
+      min-height: 100vh;
+      background: linear-gradient(120deg, #00eaff 0%, #00ff85 50%, #4f8cff 100%);
+      background-size: 200% 200%;
+      animation: bodyGradientMove 8s ease-in-out infinite alternate;
+      color: #222;
+      position: relative;
+      overflow-x: hidden;
+    }
+    @keyframes bodyGradientMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 120vw;
+      height: 120vh;
+      pointer-events: none;
+      z-index: 0;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at 60% 40%, #00eaff44 0%, #00ff8522 40%, #4f8cff11 80%, transparent 100%);
+      opacity: 0.7;
+      filter: blur(32px);
+      animation: bodyGlowMove 12s linear infinite alternate;
+    }
+    @keyframes bodyGlowMove {
+      0% { left: 50%; top: 50%; }
+      100% { left: 55%; top: 48%; }
+    }
+    .container {
+      max-width: 420px;
+      margin: 3em auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #0001;
+      padding: 2em 2em 1.5em 2em;
+      transition: box-shadow 0.2s;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 0.7em;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #00eaff 0%, #00ff85 50%, #4f8cff 100%);
+      background-size: 200% 200%;
+      color: #fff;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+      animation: h1h2GradientMove 3s ease-in-out infinite alternate;
+      filter: drop-shadow(0 2px 12px #00eaff44);
+      transition: background 0.4s, color 0.4s, filter 0.4s;
+    }
+    @keyframes h1h2GradientMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    h1 {
+      font-size: 2.2em;
+      margin-top: 0.2em;
+      margin-bottom: 0.3em;
+    }
+    h2 {
+      font-size: 1.3em;
+      margin-top: 0.2em;
+      margin-bottom: 1.2em;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+    .tab-bar {
+      display: flex;
+      margin-bottom: 2em;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px #0001;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 0.8em 0;
+      background: #f0f1f3;
+      border: none;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      color: #888;
+      outline: none;
+    }
+    .tab-btn.active {
+      background: #4f8cff;
+      color: #fff;
+      font-weight: bold;
+    }
+    section {
+      display: none;
+      animation: fadeIn 0.3s;
+    }
+    section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: none;}
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: 500;
+    }
+    input[type="text"], input[type="file"] {
+      margin-top: 0.5em;
+      width: 100%;
+      padding: 0.5em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+    button[type="submit"] {
+      margin-top: 1.5em;
+      padding: 0.7em 1.5em;
+      background: #4f8cff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: bold;
+      width: 100%;
+    }
+    button[type="submit"]:hover {
+      background: #2563eb;
+    }
+    .status, .error {
+      margin-top: 1em;
+      font-size: 0.98em;
+      min-height: 1.2em;
+    }
+    .status { color: #2563eb; }
+    .error { color: #e11d48; }
+    .prank-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 160px;
+      font-size: 2.2em;
+      font-weight: 900;
+      letter-spacing: 3px;
+      user-select: none;
+      /* Magical animated blue/green gradient text */
+      background: linear-gradient(90deg, #00eaff, #00ff85, #4f8cff, #00eaff, #00ff85, #4f8cff);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+      animation: prankBlueGreen 3s linear infinite, prankPop 1.2s cubic-bezier(.7,1.7,.5,1) infinite alternate;
+      text-shadow:
+        0 0 12px #00eaff88,
+        0 0 24px #00ff8588,
+        0 0 24px #4f8cff88;
+      filter: drop-shadow(0 0 16px #00eaff88) drop-shadow(0 0 24px #4f8cff88);
+      border-radius: 18px;
+      transition: font-size 0.2s, height 0.2s;
+    }
+    @keyframes prankBlueGreen {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    @keyframes prankPop {
+      0% { transform: scale(1);}
+      60% { transform: scale(1.08) rotate(-2deg);}
+      100% { transform: scale(1.13) rotate(2deg);}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TaSwap&trade; for Pranksters</h1>
+    <h1>—————————————</h1>
+    <h2>Fake Favicon & Title</h2>
+    <div class="tab-bar" id="tabBar">
+      <button class="tab-btn active" id="tab-auto">Auto Mode</button>
+      <button class="tab-btn" id="tab-custom">Custom Mode</button>
+      <button class="tab-btn" id="tab-prank">Prank Message</button>
+      <div class="tab-underline" id="tabUnderline"></div>
+    </div>
+
+    <!-- Section 1: Auto mode -->
+    <section id="section-auto" class="active">
+      <form id="autoForm" autocomplete="off">
+        <label>
+          Enter URL:
+          <input type="text" id="autoUrl" placeholder="e.g. https://google.com" required>
+        </label>
+        <button type="submit">Fetch Favicon & Title</button>
+      </form>
+      <div id="autoError" class="error"></div>
+      <div id="autoStatus" class="status"></div>
+      <div id="autoProgress" class="status" style="text-align:center;position:relative;top:1.2em;font-size:1.18em;font-family:'Segoe UI Semibold','Segoe UI',Arial,sans-serif;letter-spacing:0.5px;"></div>
+      <div id="autoBarContainer" style="height:24px;width:100%;background:#e3e8ee;border-radius:12px;overflow:hidden;margin:2.2em 0 0 0;box-shadow:0 1px 4px #4f8cff11;position:relative;">
+        <div id="autoBar" style="height:100%;width:0%;background:linear-gradient(90deg,#4f8cff 60%,#a8edea 100%);transition:width 0.4s;display:flex;align-items:center;justify-content:center;font-size:1.13em;font-weight:bold;color:#fff;text-shadow:0 1px 4px #4f8cff44;position:absolute;left:0;top:0;width:0%;"></div>
+        <span id="autoBarPercent" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:1.13em;font-weight:bold;color:#2563eb;pointer-events:none;z-index:2;letter-spacing:0.5px;"></span>
+      </div>
+    </section>
+
+    <!-- Section 2: Custom mode -->
+    <section id="section-custom">
+      <form id="customForm" autocomplete="off">
+        <label>
+          Upload favicon (.ico, .png, .jpg):
+          <input type="file" id="customFavicon" accept=".ico,.png,.jpg,.jpeg,image/*" required>
+        </label>
+        <label>
+          Custom label:
+          <input type="text" id="customLabel" placeholder="Enter custom title" required>
+        </label>
+        <button type="submit">Set Custom Favicon & Title</button>
+      </form>
+      <div id="customStatus" class="status"></div>
+    </section>
+
+    <!-- Section 3: Prank Message -->
+    <section id="section-prank">
+      <div class="prank-message">Pranked!</div>
+    </section>
+  </div>
+  <!-- About Panel -->
+  <div class="about-panel">
+    <h3>About TaSwap&trade;</h3>
+    <p>
+      <b>TaSwap&trade; for Pranksters</b> is a website to prank others as you're using the website that you're not allowed to.<br>
+      <b>Auto Mode:</b> Enter a URL and this app will fetch and set the real site's favicon and title (if possible).<br>
+      <b>Custom Mode:</b> Upload your own favicon and set any title you want.<br>
+      <b>Prank Message:</b> Just for Fun!<br>
+      <br>
+      <i>Note: Some sites may block crawling or have limited favicon/title support due to CORS or their own settings.</i>
+      <br><br>
+      <span style="color:#4f8cff;font-weight:bold;">Made for fun and pranking. Not for evil 😈</span><br>
+      <span style="color:#4f8cff;font-weight:bold;">&copy; Copyright 2025 @noahliNotFound. All rights reserved.</span>
+
+    </p>
+  </div>
+  <style>
+    .about-panel {
+      max-width: 480px;
+      margin: 2.5em auto 1.5em auto;
+      background: linear-gradient(90deg, #e0f7fa 0%, #e0ffe6 100%);
+      border-radius: 14px;
+      box-shadow: 0 2px 16px #00eaff22;
+      padding: 1.3em 1.5em 1.2em 1.5em;
+      font-size: 1.08em;
+      color: #155e63;
+      text-align: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      letter-spacing: 0.1px;
+      line-height: 1.7;
+      transition: background 0.3s;
+      margin-bottom: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .about-panel h3 {
+      margin-top: 0;
+      margin-bottom: 0.5em;
+      font-size: 1.25em;
+      font-weight: 900;
+      background: linear-gradient(90deg, #00eaff 0%, #4f8cff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+      letter-spacing: 1.5px;
+      text-align: center;
+    }
+    .about-panel b {
+      color: #00bfae;
+    }
+    .about-panel i {
+      color: #2563eb;
+      font-size: 0.97em;
+    }
+  </style>
+  <script>
+    // Section switching with animated underline
+    const tabBtns = [
+      document.getElementById('tab-auto'),
+      document.getElementById('tab-custom'),
+      document.getElementById('tab-prank')
+    ];
+    const sections = [
+      document.getElementById('section-auto'),
+      document.getElementById('section-custom'),
+      document.getElementById('section-prank')
+    ];
+    const tabUnderline = document.getElementById('tabUnderline');
+
+    function setActiveTab(idx) {
+      tabBtns.forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+        sections[i].classList.toggle('active', i === idx);
+      });
+      // Animate underline
+      tabUnderline.style.left = (idx * 33.3333) + '%';
+      tabUnderline.style.background = [
+        "linear-gradient(90deg, #4f8cff 60%, #a8edea 100%)",
+        "linear-gradient(90deg, #e11d48 60%, #fed6e3 100%)",
+        "linear-gradient(90deg, #f43f5e 60%, #a8edea 100%)"
+      ][idx];
+    }
+    tabBtns.forEach((btn, idx) => {
+      btn.onclick = () => setActiveTab(idx);
+    });
+    // Set initial underline position
+    setActiveTab(0);
+
+    // Helper: Set favicon
+    function setFavicon(url) {
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = url;
+    }
+
+    // Helper: Extract title from HTML (robust)
+    function extractTitle(html) {
+      // Handles newlines, extra spaces, and is case-insensitive
+      const match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+      if (match) {
+        // Remove leading/trailing whitespace and collapse inner whitespace
+        return match[1].replace(/\s+/g, ' ').trim();
+      }
+      return null;
+    }
+
+    // Helper: Extract best quality favicon from HTML
+    function extractFavicon(html, baseUrl, url) {
+      // Find all <link rel=...icon...> tags
+      const linkRegex = /<link[^>]+rel=["'][^"']*(icon|apple-touch-icon)[^"']*["'][^>]*>/gi;
+      const hrefRegex = /href=["']([^"']+)["']/i;
+      const sizesRegex = /sizes=["']([^"']+)["']/i;
+      const typeRegex = /type=["']([^"']+)["']/i;
+      let matches = html.match(linkRegex);
+      if (!matches) return null;
+
+      // Parse all candidates
+      let candidates = [];
+      for (let tag of matches) {
+        let hrefMatch = tag.match(hrefRegex);
+        if (!hrefMatch) continue;
+        let href = hrefMatch[1];
+        let sizes = tag.match(sizesRegex)?.[1] || '';
+        let type = tag.match(typeRegex)?.[1] || '';
+        // Normalize URL
+        if (href.startsWith('//')) {
+          href = window.location.protocol + href;
+        } else if (href.startsWith('/')) {
+          href = baseUrl + href;
+        } else if (!href.startsWith('http') && !href.startsWith('data:')) {
+          href = baseUrl + '/' + href.replace(/^\.\//, '');
+        }
+        candidates.push({ href, sizes, type });
+      }
+
+      // Prefer SVG
+      let svg = candidates.find(c => c.type.includes('svg') || c.href.endsWith('.svg'));
+      if (svg) return svg.href;
+
+      // Prefer Apple Touch icon with largest size
+      let apple = candidates
+        .filter(c => c.type.includes('apple') || c.href.includes('apple-touch-icon'))
+        .sort((a, b) => {
+          let sa = parseInt(a.sizes) || 0, sb = parseInt(b.sizes) || 0;
+          return sb - sa;
+        })[0];
+      if (apple) return apple.href;
+
+      // Prefer largest size
+      let best = null, bestSize = 0;
+      for (let c of candidates) {
+        let size = 0;
+        if (c.sizes) {
+          let s = c.sizes.split('x')[0];
+          size = parseInt(s, 10) || 0;
+        }
+        if (size > bestSize) {
+          best = c;
+          bestSize = size;
+        }
+      }
+      if (best) return best.href;
+
+      // Fallback to first found
+      if (candidates[0]) return candidates[0].href;
+
+      // Fallback to Google favicon proxy
+      return `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url.href)}`;
+    }
+
+    // Section 1: Auto mode with CORS proxy and task process
+    document.getElementById('autoForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const urlInput = document.getElementById('autoUrl').value.trim();
+      const autoError = document.getElementById('autoError');
+      const autoStatus = document.getElementById('autoStatus');
+      const autoProgress = document.getElementById('autoProgress');
+      const autoBar = document.getElementById('autoBar');
+      const autoBarPercent = document.getElementById('autoBarPercent');
+      
+      autoError.textContent = '';
+      autoStatus.textContent = '';
+      autoProgress.textContent = '';
+      autoBar.style.width = "0%";
+      autoBar.textContent = "";
+      autoBarPercent.textContent = "";
+
+      let url;
+      try {
+        url = new URL(urlInput.startsWith('http') ? urlInput : 'https://' + urlInput);
+      } catch {
+        autoError.textContent = 'Invalid URL';
+        autoStatus.textContent = '';
+        autoProgress.textContent = '';
+        autoBar.style.width = "0%";
+        autoBar.textContent = "";
+        autoBarPercent.textContent = "";
+        return;
+      }
+
+      // Task process messages and progress
+      const steps = [
+        { msg: `Connecting to ${url.href} ...`, pct: 20 },
+        { msg: "Crawling favicon ...", pct: 45 },
+        { msg: "Crawling title ...", pct: 70 },
+        { msg: "Almost there ...", pct: 90 },
+        { msg: "Done!", pct: 100 }
+      ];
+      let step = 0;
+      function nextStep(msg, pct) {
+        autoProgress.textContent = msg || steps[step]?.msg || "";
+        let percent = (pct !== undefined ? pct : steps[step]?.pct || 0);
+        autoBar.style.width = percent + "%";
+        autoBarPercent.textContent = percent + "%";
+        step++;
+      }
+
+      try {
+        nextStep(); // Connecting (20%)
+        let html = null;
+        try {
+          // Try allorigins first
+          let proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url.href)}`;
+          let response = await fetch(proxyUrl);
+          if (!response.ok) throw new Error();
+
+          html = await response.text();
+        } catch {
+          // Fallback to corsproxy.io
+          try {
+            let proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url.href)}`;
+            let response = await fetch(proxyUrl);
+            if (!response.ok) throw new Error();
+            html = await response.text();
+          } catch {
+            throw new Error("Both CORS proxies failed or the site blocks crawling.");
+          }
+        }
+
+        nextStep(); // Crawling favicon (45%)
+        const favicon = extractFavicon(html, url.origin, url);
+        if (favicon) {
+          setFavicon(favicon);
+          autoStatus.textContent = `Favicon updated`;
+        } else {
+          // Fallback to default favicon
+          setFavicon(url.origin + '/favicon.ico');
+          autoStatus.textContent = `Using default favicon`;
+        }
+
+        nextStep(); // Crawling title (70%)
+
+        // Extract title (robust)
+        const title = extractTitle(html);
+        if (title) {
+          document.title = title;
+          autoStatus.textContent += ` | Title set to: "${title}"`;
+        } else {
+          document.title = url.hostname;
+          autoStatus.textContent += ` | Title set to domain: ${url.hostname}`;
+        }
+
+        nextStep(); // Almost there (90%)
+
+        setTimeout(() => {
+          nextStep(); // Done! (100%)
+          setTimeout(() => { 
+            autoProgress.textContent = ""; 
+            autoBar.style.width = "0%";
+            autoBar.textContent = "";
+            autoBarPercent.textContent = "";
+          }, 1200);
+        }, 600);
+
+      } catch (error) {
+        console.error('Error:', error);
+        autoError.textContent = `Failed to fetch: ${error.message}`;
+        autoStatus.textContent = '';
+        autoProgress.textContent = '';
+        autoBar.style.width = "0%";
+        autoBar.textContent = "";
+        autoBarPercent.textContent = "";
+        // Fallback: just set favicon and domain as title
+        setFavicon(url.origin + '/favicon.ico');
+        document.title = url.hostname;
+      }
+    });
+
+    // Section 2: Custom mode
+    document.getElementById('customForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById('customFavicon');
+      const labelInput = document.getElementById('customLabel').value.trim();
+      const customStatus = document.getElementById('customStatus');
+
+      if (fileInput.files.length === 0) return;
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        setFavicon(ev.target.result);
+        document.title = labelInput;
+        customStatus.textContent = `Title set to: "${labelInput}" | Favicon updated`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Set initial title and favicon
+    document.title = "TaSwap-For Pranksters";
+    setFavicon("icon.png"); // fun troll emoji favicon
+  </script>
+</body>
+</html>
