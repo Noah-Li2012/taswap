@@ -419,7 +419,7 @@
     // Section 1: Auto mode with CORS proxy and task process
     document.getElementById('autoForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const urlInput = document.getElementById('autoUrl').value.trim();
+      const urlInputRaw = document.getElementById('autoUrl').value.trim();
       const autoError = document.getElementById('autoError');
       const autoStatus = document.getElementById('autoStatus');
       const autoProgress = document.getElementById('autoProgress');
@@ -433,9 +433,16 @@
       autoBar.textContent = "";
       autoBarPercent.textContent = "";
 
+      // Automatically add https:// if not present
+      let urlInput = urlInputRaw;
+      if (!/^https?:\/\//i.test(urlInput)) {
+        urlInput = "https://" + urlInput;
+        document.getElementById('autoUrl').value = urlInput; // update input for user
+      }
+
       let url;
       try {
-        url = new URL(urlInput.startsWith('http') ? urlInput : 'https://' + urlInput);
+        url = new URL(urlInput);
       } catch {
         autoError.textContent = 'Invalid URL';
         autoStatus.textContent = '';
